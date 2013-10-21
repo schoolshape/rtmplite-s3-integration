@@ -2,6 +2,7 @@ from ConfigParser import ConfigParser
 import  multitask, time, os, logging, sys
 from s3_help import Storage
 from rtmp import FlashServer
+from msgHandler import rtmpLogHandler
 
 log = logging.getLogger('__main__')
 
@@ -57,17 +58,11 @@ class App():
     def initLogging(self):
         #create a logger
         logger = logging.getLogger('__main__')
-        logger.setLevel(logging.INFO)
+        logger.addHandler(rtmpLogHandler())
         #init the formatter
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        #create handler(s) to write log
-        infoHandler = logging.FileHandler(self.logger)
-        infoHandler.setLevel(logging.INFO)
-        infoHandler.setFormatter(formatter)
-        logger.addHandler(infoHandler)
         if self.log_debug:
             logger.setLevel(logging.DEBUG)
-            infoHandler.setLevel(logging.DEBUG)
         if self.log_screen:    
             debugHandler = logging.StreamHandler()
             debugHandler.setLevel(logging.DEBUG)
