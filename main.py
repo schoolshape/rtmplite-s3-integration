@@ -58,7 +58,14 @@ class App():
     def initLogging(self):
         #create a logger
         logger = logging.getLogger('__main__')
-        logger.addHandler(rtmpLogHandler())
+
+        if os.path.isfile('RabbitMQAuth.py'):
+            logger.addHandler(rtmpLogHandler())
+        else:
+            infoHandler = logging.FileHandler(self.logger)
+            infoHandler.setLevel(logging.INFO)
+            infoHandler.setFormatter(formatter)
+            logger.addHandler(infoHandler)
         #init the formatter
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         if self.log_debug:

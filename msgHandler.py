@@ -1,12 +1,11 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-import pika, logging, socket
+import pika, logging, socket, os
 from RabbitMQAuth import *
 
 def getIpAddr():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('google.com', 0))
-    return s.getsockname()[0]
+    ip = os.popen('hostname -i').read()
+    return ip[:-2] # "127.0.0.1 \n".[:-2] == "127.0.0.1"
 
 ip = getIpAddr()
 
@@ -19,7 +18,7 @@ class RabbitMQSender():
         self.channel.exchange_declare(exchange=EXCHANGE, type='topic')
     def message(self, msg):
         self.channel.basic_publish(exchange=EXCHANGE,
-            routing_key='rtmp.{0}.{1}.{2}'.format(ip, msg['module'], msg['level']),
+            routing_key='stream.{0}.{1}.{2}'.format(ip, msg['module'], msg['level']),
             body=msg['message'])
 
 class rtmpLogHandler(logging.Handler):
