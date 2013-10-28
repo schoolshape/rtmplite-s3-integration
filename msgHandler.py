@@ -17,9 +17,12 @@ class RabbitMQSender():
         self.channel = connection.channel()
         self.channel.exchange_declare(exchange=EXCHANGE, type='topic')
     def message(self, msg):
-        self.channel.basic_publish(exchange=EXCHANGE,
-            routing_key='stream.{0}.{1}.{2}'.format(ip, msg['module'], msg['level']),
-            body=msg['message'])
+        try:
+            self.channel.basic_publish(exchange=EXCHANGE,
+                routing_key='stream.{0}.{1}.{2}'.format(ip, msg['module'], msg['level']),
+                body=msg['message'])
+        except:
+            pass
 
 class rtmpLogHandler(logging.Handler):
     def __init__(self):

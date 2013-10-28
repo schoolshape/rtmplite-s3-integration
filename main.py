@@ -2,7 +2,6 @@ from ConfigParser import ConfigParser
 import  multitask, time, os, logging, sys
 from s3_help import Storage
 from rtmp import FlashServer
-from msgHandler import rtmpLogHandler
 
 log = logging.getLogger('__main__')
 
@@ -59,15 +58,16 @@ class App():
         #create a logger
         logger = logging.getLogger('__main__')
 
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         if os.path.isfile('RabbitMQAuth.py'):
-            logger.addHandler(rtmpLogHandler())
+            msgHandler = __import__('msgHandler')
+            logger.addHandler(msgHandler.rtmpLogHandler())
         else:
             infoHandler = logging.FileHandler(self.logger)
             infoHandler.setLevel(logging.INFO)
             infoHandler.setFormatter(formatter)
             logger.addHandler(infoHandler)
         #init the formatter
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         if self.log_debug:
             logger.setLevel(logging.DEBUG)
         if self.log_screen:    
